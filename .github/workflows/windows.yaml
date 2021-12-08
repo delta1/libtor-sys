@@ -1,0 +1,42 @@
+name: Cross compile windows
+on: [push]
+
+jobs:
+  linux-cross-windows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml','**/Cargo.lock') }}
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          override: true
+          toolchain: ${{ matrix.channel }}
+          target: ${{ matrix.target }}
+      - run: sudo apt-get install -y gcc-mingw-w64-x86-64 gcc-mingw-w64-i686 libnpth-mingw-w64-dev
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --features=${{ matrix.features }} --target ${{ matrix.target }} -vv --release
+      - name: temp
+        run: |
+          ls -alht target/
+          ls -alht target/release/
+      - uses: actions/upload-artifact@v2
+        with:
+          name: target
+          path: target/
+    strategy:
+      matrix:
+        channel: [stable]
+        # always build at least with `vendored-openssl` for MingW
+        features: ["vendored-openssl", "vendored-openssl,vendored-lzma,vendored-zstd"]
+        target:
+          - i686-pc-windows-gnu
+          - x86_64-pc-windows-gnu
