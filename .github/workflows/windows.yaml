@@ -38,5 +38,5 @@ jobs:
         # always build at least with `vendored-openssl` for MingW
         features: ["vendored-openssl", "vendored-openssl,vendored-lzma,vendored-zstd"]
         target:
-          - i686-pc-windows-gnu
           - x86_64-pc-windows-gnu
+          # - i686-pc-windows-gnu
