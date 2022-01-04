@@ -33,11 +33,6 @@ jobs:
           name: libtor_sys.rlib
           path: target/x86_64-pc-windows-gnu/release/libtor_sys.rlib
           if-no-files-found: error
-      - uses: actions/upload-artifact@v2
-        with:
-          name: libtor_sys.d
-          path: target/x86_64-pc-windows-gnu/release/libtor_sys.d
-          if-no-files-found: error
     strategy:
       matrix:
         channel: [nightly-2021-09-18]
