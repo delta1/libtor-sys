@@ -25,13 +25,16 @@ jobs:
         with:
           command: build
           args: --features=${{ matrix.features }} --target ${{ matrix.target }} -vv --release
-      - name: ls
+      - name: md5
         run: |
-          ls -alht target/x86_64-pc-windows-gnu/release/
+          cd target/x86_64-pc-windows-gnu/release/
+          ls -alht .
+          md5sum libtor_sys.* | tee temp.txt
+          mv temp.txt libtor_sys.md5
       - uses: actions/upload-artifact@v2
         with:
           name: libtor_sys.rlib
-          path: target/x86_64-pc-windows-gnu/release/libtor_sys.rlib
+          path: target/x86_64-pc-windows-gnu/release/libtor_sys.*
           if-no-files-found: error
     strategy:
       matrix:
