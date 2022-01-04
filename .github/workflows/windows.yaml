@@ -20,22 +20,28 @@ jobs:
           toolchain: ${{ matrix.channel }}
           target: ${{ matrix.target }}
       - run: sudo apt-get install -y gcc-mingw-w64-x86-64 libnpth-mingw-w64-dev
-      # gcc-mingw-w64-i686 
+      # gcc-mingw-w64-i686
       - uses: actions-rs/cargo@v1
         with:
           command: build
           args: --features=${{ matrix.features }} --target ${{ matrix.target }} -vv --release
-      - name: temp
+      - name: ls
         run: |
-          ls -alht target/
-          ls -alht target/release/
+          ls -alht target/x86_64-pc-windows-gnu/release/
       - uses: actions/upload-artifact@v2
         with:
           name: libtor_sys.rlib
           path: target/x86_64-pc-windows-gnu/release/libtor_sys.rlib
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v2
+        with:
+          name: libtor_sys.d
+          path: target/x86_64-pc-windows-gnu/release/libtor_sys.d
+          if-no-files-found: error
     strategy:
       matrix:
-        channel: [stable]
+        channel: [nightly-2021-09-18]
+        # channel: [stable, nightly-2021-09-18]
         # always build at least with `vendored-openssl` for MingW
         features: ["vendored-openssl"]
         # features: ["vendored-openssl", "vendored-openssl,vendored-lzma,vendored-zstd"]
